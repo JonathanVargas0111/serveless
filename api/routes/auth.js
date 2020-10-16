@@ -40,14 +40,16 @@ router.post('/register', (req, res) =>{
 })
 
 router.post('/login', (req, res) =>{
-    const {email, password} = res.body
-    user.findOne({email}).exec
+    const {email, password} = req.body
+    console.log(req.body)
+    Users.findOne({email}).exec()
         .then(user=>{
             if(!user){
                 res.send('Usuario y/o contraseña incorrectos')
             }
             crypto.pbkdf2(password, user.salt, 10000, 64,'sha1',(err,key)=>{
                 const encryptedPassword = key.toString('base64')
+                
                 if(user.password === encryptedPassword){
                     const token = signToken(user._id)//Encripta user id
                     return res.send({token})
